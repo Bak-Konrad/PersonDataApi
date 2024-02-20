@@ -19,7 +19,8 @@ public class GeneralMapper {
                 .salary(position.getSalary())
                 .build();
     }
-    public ImportStatusDto mapImportStatusToDto(ImportStatus status){
+
+    public ImportStatusDto mapImportStatusToDto(ImportStatus status) {
         return ImportStatusDto.builder()
                 .status(status.getStatus())
                 .id(status.getStatusId())

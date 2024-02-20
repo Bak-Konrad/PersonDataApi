@@ -25,7 +25,7 @@ import java.util.List;
 @Slf4j
 public class CsvImportMethod {
     private final ImportStatusService importStatusService;
-    private final BatchingMetchodForCsvAsync batchingMetchodForCsvAsync;
+    private final BatchingMethodForCsvAsync batchingMethodForCsvAsync;
     @Value("${csv.batch.size}")
     private int batchSize;
 
@@ -49,14 +49,14 @@ public class CsvImportMethod {
                 log.info("Lines processed: {}", processedLines);
 
                 if (batch.size() >= batchSize) {
-                    batchingMetchodForCsvAsync.saveBatch(batch);
+                    batchingMethodForCsvAsync.saveBatch(batch);
                     batch.clear();
                     importStatusService.updateProcessedLines(importStatus, processedLines);
                 }
             }
 
             if (!batch.isEmpty()) {
-                batchingMetchodForCsvAsync.saveBatch(batch);
+                batchingMethodForCsvAsync.saveBatch(batch);
             }
             importStatusService.updateProcessedLines(importStatus, processedLines);
         } catch (IOException | CsvValidationException e) {

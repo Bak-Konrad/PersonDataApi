@@ -1,6 +1,5 @@
 package kb.persondata.csvimport;
 
-import jakarta.validation.Valid;
 import kb.persondata.csvimport.importstatus.ImportStatusService;
 import kb.persondata.csvimport.importstatus.model.dto.ImportStatusDto;
 import lombok.RequiredArgsConstructor;
@@ -19,9 +18,7 @@ public class CsvImportController {
     private final CsvImportProcessingService importService;
     private final ImportStatusService importStatusService;
 
-
     @PreAuthorize("hasAuthority('ROLE_ADMIN,ROLE_IMPORTER')")
-
     @PostMapping(consumes = {"multipart/form-data"})
     public ResponseEntity<ImportStatusDto> addPersonsFromFile(@RequestPart("file") MultipartFile file,
                                                               @RequestParam String statusCommand) {

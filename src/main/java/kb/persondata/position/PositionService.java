@@ -40,6 +40,7 @@ public class PositionService {
         employeeRepository.save(employeeToUpdate);
         return generalMapper.mapPositionToDto(positionToSave);
     }
+
     private void validatePositionDates(Employee employee, Position newPosition) {
         List<Position> employmentHistory = employee.getEmploymentHistory();
 
@@ -47,7 +48,6 @@ public class PositionService {
             if (position.getToDate().isAfter(newPosition.getFromDate())) {
                 throw new IllegalArgumentException("New position dates cannot overlap");
             }
-
         }
     }
 }

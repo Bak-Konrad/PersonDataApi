@@ -5,6 +5,7 @@ import jakarta.validation.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -40,5 +41,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ExceptionDto> handleIllegalStateException(IllegalStateException ex) {
         ExceptionDto exceptionDto = new ExceptionDto(ex.getMessage());
         return new ResponseEntity<>(exceptionDto, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
+    public ResponseEntity<ExceptionDto> handleOptimisticLockingFailure(ObjectOptimisticLockingFailureException ex) {
+        ExceptionDto exceptionDto = new ExceptionDto(ex.getMessage());
+        return new ResponseEntity<>(exceptionDto, HttpStatus.CONFLICT);
     }
 }

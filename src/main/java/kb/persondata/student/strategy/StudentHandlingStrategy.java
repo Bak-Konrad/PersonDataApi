@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Map;
+
 @Component("STUDENT")
 @RequiredArgsConstructor
 public class StudentHandlingStrategy implements PersonHandlingStrategy<Student> {
@@ -59,7 +60,6 @@ public class StudentHandlingStrategy implements PersonHandlingStrategy<Student> 
         }
         return personToUpdate;
 
-
     }
 
     @Override
@@ -102,7 +102,7 @@ public class StudentHandlingStrategy implements PersonHandlingStrategy<Student> 
     @Override
     public Specification<Person> createSpecification(Specification<Person> specification,
                                                      PersonFilteringParameters filteringParameters) {
-        Map<String,String> temp = filteringParameters.getParams();
+        Map<String, String> temp = filteringParameters.getParams();
 
         if (temp.containsKey("universityName")) {
             specification = specification.and((root, query, builder) ->
@@ -136,18 +136,19 @@ public class StudentHandlingStrategy implements PersonHandlingStrategy<Student> 
 
     @Override
     public boolean hasChanges(UpdatePersonCommand updatePersonCommand) {
-        Map<String,String> params = updatePersonCommand.getParams();
+        Map<String, String> params = updatePersonCommand.getParams();
         boolean hasChanges = fieldsUpdater.hasChanges(params);
 
 
         for (Map.Entry<String, String> entry : params.entrySet()) {
             String key = entry.getKey();
-            if ((key.equals("universityName") || key.equals("academicYear") || key.equals("courseName") || key.equals("scholarship")) && entry.getValue() != null) {
+            if ((key.equals("universityName") || key.equals("academicYear") || key.equals("courseName") ||
+                    key.equals("scholarship")) && entry.getValue() != null && !entry.getValue().isBlank()) {
                 hasChanges = true;
                 break;
             }
         }
         return hasChanges;
     }
-    }
+}
 

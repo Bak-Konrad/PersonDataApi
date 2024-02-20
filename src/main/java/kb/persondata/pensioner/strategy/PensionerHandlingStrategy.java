@@ -39,7 +39,6 @@ public class PensionerHandlingStrategy implements PersonHandlingStrategy<Pension
                 .yearsWorked(Integer.parseInt(params.get("yearsWorked")))
                 .pensionValue(new BigDecimal(params.get("pensionValue")))
                 .build();
-
     }
 
     @Override
@@ -90,7 +89,7 @@ public class PensionerHandlingStrategy implements PersonHandlingStrategy<Pension
     @Override
     public Specification<Person> createSpecification(Specification<Person> specification,
                                                      PersonFilteringParameters filteringParameters) {
-        Map<String,String> temp = filteringParameters.getParams();
+        Map<String, String> temp = filteringParameters.getParams();
 
         if (temp.containsKey("fromYearsWorked") && temp.containsKey("toYearsWorked")) {
             specification = specification.and((root, query, builder) ->
@@ -104,25 +103,23 @@ public class PensionerHandlingStrategy implements PersonHandlingStrategy<Pension
                             Double.parseDouble(temp.get("fromPensionValue")),
                             Double.parseDouble(temp.get("toPensionValue"))));
         }
-
         return specification;
     }
 
     @Override
     public boolean hasChanges(UpdatePersonCommand updatePersonCommand) {
-        Map<String,String> params = updatePersonCommand.getParams();
-            boolean hasChanges = fieldsUpdater.hasChanges(params);
+        Map<String, String> params = updatePersonCommand.getParams();
+        boolean hasChanges = fieldsUpdater.hasChanges(params);
 
-            for (Map.Entry<String, String> entry : params.entrySet()) {
-                String key = entry.getKey();
-                if ((key.equals("pensionValue") || key.equals("yearsWorked")) && entry.getValue() != null) {
-                    hasChanges = true;
-                    break;
-                }
+        for (Map.Entry<String, String> entry : params.entrySet()) {
+            String key = entry.getKey();
+            if ((key.equals("pensionValue") || key.equals("yearsWorked")) && entry.getValue() != null
+                    && !entry.getValue().isBlank()) {
+                hasChanges = true;
+                break;
             }
-
-            return hasChanges;
         }
-
+        return hasChanges;
+    }
 }
 

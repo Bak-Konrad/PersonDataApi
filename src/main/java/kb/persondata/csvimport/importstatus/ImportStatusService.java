@@ -27,19 +27,19 @@ public class ImportStatusService {
                 .statusId(statusId)
                 .status("In progress")
                 .build();
-      importStatusRepository.save(importStatus);
+        importStatusRepository.save(importStatus);
         return importStatus;
     }
 
-@Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void updateProcessedLines(ImportStatus status,Long lines) {
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void updateProcessedLines(ImportStatus status, Long lines) {
         ImportStatus importStatusToUpdate = getFromDb(status.getStatusId());
         importStatusToUpdate.setProcessedLines(lines);
         importStatusRepository.save(importStatusToUpdate);
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void updateProcessedLinesForError(ImportStatus status,Long lines) {
+    public void updateProcessedLinesForError(ImportStatus status, Long lines) {
         ImportStatus importStatusToUpdate = getFromDb(status.getStatusId());
         importStatusToUpdate.setProcessedLines(lines);
         importStatusToUpdate.setStatus("Error occurred");
@@ -47,8 +47,7 @@ public class ImportStatusService {
     }
 
     public ImportStatusDto findById(String statusId) {
-       ImportStatus importStatus = getFromDb(statusId);
-        log.info("IMPORT STATUS W STATUS SERVICE: " + importStatus.getStatus());
+        ImportStatus importStatus = getFromDb(statusId);
         return generalMapper.mapImportStatusToDto(importStatus);
     }
 
@@ -60,9 +59,9 @@ public class ImportStatusService {
         importStatusRepository.save(importStatus);
     }
 
-    private ImportStatus getFromDb(String statusId){
+    private ImportStatus getFromDb(String statusId) {
         return importStatusRepository.findByStatusId(statusId)
-                .orElseThrow(()-> new EntityNotFoundException(MessageFormat
+                .orElseThrow(() -> new EntityNotFoundException(MessageFormat
                         .format("ImportStatus related to id= {0} has not been found", statusId)));
     }
 }

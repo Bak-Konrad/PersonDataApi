@@ -82,7 +82,6 @@ public class EmployeeHandlingStrategy implements PersonHandlingStrategy<Employee
                 .build();
     }
 
-
     @Override
     public EmployeeDto createPersonDto(Employee person) {
         return EmployeeDto.builder()
@@ -107,7 +106,6 @@ public class EmployeeHandlingStrategy implements PersonHandlingStrategy<Employee
                 .map(generalMapper::mapPositionToDto)
                 .toList();
     }
-
 
     @Override
     public Specification<Person> createSpecification(Specification<Person> specification,
@@ -135,10 +133,8 @@ public class EmployeeHandlingStrategy implements PersonHandlingStrategy<Employee
         if (temp.containsKey("employmentHistory")) {
             String employeePersonalNumber = temp.get("employmentHistory");
             specification = specification.and((root, query, builder) -> {
-                // Dołączamy Employee i Position do zapytania
                 Join<Employee, Position> positionJoin = root.join("employmentHistory", JoinType.LEFT);
                 Join<Position, Employee> employeeJoin = positionJoin.join("employee", JoinType.LEFT);
-                // Tworzymy warunek dla numeru personalnego pracownika
                 return builder.equal(employeeJoin.get("personalNumber"), employeePersonalNumber);
             });
         }
@@ -152,12 +148,12 @@ public class EmployeeHandlingStrategy implements PersonHandlingStrategy<Employee
 
         for (Map.Entry<String, String> entry : params.entrySet()) {
             String key = entry.getKey();
-            if ((key.equals("actualPosition") || key.equals("actualSalary") || key.equals("actualWorkFrom")) && entry.getValue() != null) {
+            if ((key.equals("actualPosition") || key.equals("actualSalary") || key.equals("actualWorkFrom"))
+                    && entry.getValue() != null && !entry.getValue().isBlank()) {
                 hasChanges = true;
                 break;
             }
         }
-
         return hasChanges;
     }
 

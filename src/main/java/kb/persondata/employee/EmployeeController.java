@@ -15,7 +15,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/data/employees")
 public class EmployeeController {
-
     private final PositionService positionService;
     private final GeneralMapper generalMapper;
 

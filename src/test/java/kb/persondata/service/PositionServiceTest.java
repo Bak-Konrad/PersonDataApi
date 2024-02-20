@@ -97,7 +97,7 @@ public class PositionServiceTest {
         when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employeeToUpdate));
 
         // When + Then
-       assertThatExceptionOfType(IllegalArgumentException.class)
+        assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> positionService.registerPositionForEmployee(employeeId, positionToSave))
                 .withMessage("New position dates cannot overlap");
         verify(positionRepository, never()).save(any());

@@ -52,6 +52,4 @@ public class Person {
     @Size(max = 50, message = "Email address must be less than or equal to 50 characters")
     @Column(unique = true)
     private String emailAddress;
-
-
 }

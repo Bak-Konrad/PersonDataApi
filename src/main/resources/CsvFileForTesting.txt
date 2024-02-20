@@ -1,0 +1,4 @@
+TYPE,firstName,lastName,personalNumber,height,weight,emailAddress,universityName,academicYear,courseName,scholarship,actualPosition,actualSalary,actualWorkFrom,pensionValue,yearsWorked
+STUDENT,John,Doe,92051212345,175,70,johndoe@example.com,University1,2022-09-01,CourseA,1500,,,,,,,,,
+PENSIONER,Matthew,King,75081512345,175,70,matthewking@example.com,,,,,,2500,25
+EMPLOYEE,Robert,White,83081512345,175,70,robertwhite@example.com,,,Position1,8000,2010-05-15,,,

@@ -7,6 +7,7 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+
 @Data
 public class CreatePositionCommand {
     @NotNull(message = "From Date cannot be null")
