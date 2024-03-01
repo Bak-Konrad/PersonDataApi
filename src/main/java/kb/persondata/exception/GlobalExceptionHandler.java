@@ -45,7 +45,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
     public ResponseEntity<ExceptionDto> handleOptimisticLockingFailure(ObjectOptimisticLockingFailureException ex) {
-        ExceptionDto exceptionDto = new ExceptionDto(ex.getMessage());
+        ExceptionDto exceptionDto = new ExceptionDto("An error occurred while processing your request. " +
+                "Another user has modified the data you were attempting to update. Please try again. " + ex.getMessage());
         return new ResponseEntity<>(exceptionDto, HttpStatus.CONFLICT);
     }
 }

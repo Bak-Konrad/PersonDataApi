@@ -18,17 +18,17 @@ public class CsvImportController {
     private final CsvImportProcessingService importService;
     private final ImportStatusService importStatusService;
 
-    @PreAuthorize("hasAuthority('ROLE_ADMIN,ROLE_IMPORTER')")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('IMPORTER')")
     @PostMapping(consumes = {"multipart/form-data"})
-    public ResponseEntity<ImportStatusDto> addPersonsFromFile(@RequestPart("file") MultipartFile file,
-                                                              @RequestParam String statusCommand) {
-        return new ResponseEntity<>(importService.importCsv(file, statusCommand), HttpStatus.ACCEPTED);
+    public ResponseEntity<ImportStatusDto> addPersonsFromFile(@RequestPart("file") MultipartFile file) {
+        return new ResponseEntity<>(importService.importCsv(file), HttpStatus.ACCEPTED);
     }
 
-    @PreAuthorize("hasAuthority('ROLE_ADMIN,ROLE_IMPORTER')")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('IMPORTER')")
     @GetMapping("/{importId}")
-    public ResponseEntity<ImportStatusDto> getImportStatus(@PathVariable String importId) {
+    public ResponseEntity<ImportStatusDto> getImportStatus(@PathVariable Long importId) {
 
         return new ResponseEntity<>(importStatusService.findById(importId), HttpStatus.OK);
     }
+
 }

@@ -21,14 +21,12 @@ public class ImportStatusService {
     private final CsvImportStatusRepository importStatusRepository;
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public ImportStatus createImportStatus(String statusId) {
+    public ImportStatus createImportStatus() {
         ImportStatus importStatus = ImportStatus.builder()
                 .creationDate(LocalDateTime.now())
-                .statusId(statusId)
                 .status("In progress")
                 .build();
-        importStatusRepository.save(importStatus);
-        return importStatus;
+        return importStatusRepository.save(importStatus);
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -46,7 +44,7 @@ public class ImportStatusService {
         importStatusRepository.save(importStatusToUpdate);
     }
 
-    public ImportStatusDto findById(String statusId) {
+    public ImportStatusDto findById(Long statusId) {
         ImportStatus importStatus = getFromDb(statusId);
         return generalMapper.mapImportStatusToDto(importStatus);
     }
@@ -59,8 +57,8 @@ public class ImportStatusService {
         importStatusRepository.save(importStatus);
     }
 
-    private ImportStatus getFromDb(String statusId) {
-        return importStatusRepository.findByStatusId(statusId)
+    private ImportStatus getFromDb(Long statusId) {
+        return importStatusRepository.findById(statusId)
                 .orElseThrow(() -> new EntityNotFoundException(MessageFormat
                         .format("ImportStatus related to id= {0} has not been found", statusId)));
     }

@@ -1,6 +1,8 @@
 package kb.persondata.csvimport.importstatus.model;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.*;
 
@@ -14,7 +16,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class ImportStatus {
     @Id
-    private String statusId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long statusId;
     private String status;
     private LocalDateTime creationDate;
     private LocalDateTime endDate;

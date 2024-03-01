@@ -3,7 +3,6 @@ package kb.persondata.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kb.persondata.employee.model.Employee;
-import kb.persondata.mapper.GeneralMapper;
 import kb.persondata.person.PersonRepository;
 import kb.persondata.position.PositionRepository;
 import kb.persondata.position.model.command.CreatePositionCommand;
@@ -48,7 +47,7 @@ class EmployeeControllerTest {
     }
 
     @Test
-    @WithMockUser(authorities = {"ROLE_ADMIN"})
+    @WithMockUser(authorities = {"ADMIN"})
     void testAddPositionForEmployee_RoleAdmin() throws Exception {
         Employee employee = Employee.builder()
                 .entityType("EMPLOYEE")
@@ -76,7 +75,7 @@ class EmployeeControllerTest {
     }
 
     @Test
-    @WithMockUser(authorities = {"ROLE_EMPLOYEE"})
+    @WithMockUser(authorities = {"EMPLOYEE"})
     void testAddPositionForEmployee_RoleEmployee() throws Exception {
         Employee employee = Employee.builder()
                 .entityType("EMPLOYEE")

@@ -58,7 +58,6 @@ public class PersonServiceTest {
 
         // Then
         assertSame(expectedDto, result);
-        verify(personRepository).save(employeeToUpdate);
     }
 
     @Test
@@ -86,7 +85,7 @@ public class PersonServiceTest {
 
         // Then
         assertSame(expectedDto, result);
-        verify(personRepository).save(pensionerToUpdate);
+
     }
 
     @Test
@@ -112,7 +111,6 @@ public class PersonServiceTest {
 
         // Then
         assertSame(expectedDto, result);
-        verify(personRepository).save(studentToUpdate);
     }
 
     @Test

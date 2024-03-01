@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 @Builder
 @Getter
 public class ImportStatusDto {
-    private String id;
+    private Long id;
     private String status;
     private final LocalDateTime creationDate;
     private LocalDateTime endDate;

@@ -65,7 +65,6 @@ public class EmployeeHandlingStrategy implements PersonHandlingStrategy<Employee
         return personToUpdate;
     }
 
-
     @Override
     public Employee addPersonFromCsv(String[] personData) {
         return Employee.builder()
@@ -98,7 +97,6 @@ public class EmployeeHandlingStrategy implements PersonHandlingStrategy<Employee
                 .actualSalary(person.getActualSalary())
                 .employmentHistory(createPositionDto(person.getEmploymentHistory()))
                 .build();
-
     }
 
     private List<PositionDto> createPositionDto(List<Position> positions) {

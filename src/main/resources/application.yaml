@@ -1,12 +1,54 @@
+server:
+  port: 8081
+#  do sprawdzenia jak działa na porcie 8081
+
 spring:
   datasource:
     url: jdbc:h2:mem:test
     username: sa
     password: password
     driver-class-name: org.h2.Driver
-csv:
-  batch:
-    size: 10
+
+  security:
+    oauth2:
+     resourceserver:
+       jwt:
+#         issuer-uri: http://localhost:8888/realms/PersonDataApi
+         issuer-uri: http://localhost:8080/realms/PersonDataApi
+         jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
+
+
+
+  jwt:
+    auth:
+      converter:
+        resource-id: PersonDataApiClient
+        principal-attribute: preferred_username
+
+
+
+
+#  security:
+#    oauth2:
+#      client:
+#        registration:
+#          keycloak:
+#            client-id: PersonDataApiClient
+#            #            client-secret: my-client-secret
+#            scope: openid, profile, email
+#        provider:
+#          keycloak:
+#            token-uri: ${keycloak.auth-server-url}/realms/${keycloak.realm}/protocol/openid-connect/token
+#            authorization-uri: ${keycloak.auth-server-url}/realms/${keycloak.realm}/protocol/openid-connect/auth
+#            user-info-uri: ${keycloak.auth-server-url}/realms/${keycloak.realm}/protocol/openid-connect/userinfo
+#            jwk-set-uri: ${keycloak.auth-server-url}/realms/${keycloak.realm}/protocol/openid-connect/certs
+
+
+  jpa:
+    open-in-view: false
+    show-sql: true
+
+
 
 
 

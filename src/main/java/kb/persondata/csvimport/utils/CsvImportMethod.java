@@ -9,7 +9,6 @@ import kb.persondata.csvimport.importstatus.ImportStatusService;
 import kb.persondata.csvimport.importstatus.model.ImportStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,8 +25,6 @@ import java.util.List;
 public class CsvImportMethod {
     private final ImportStatusService importStatusService;
     private final BatchingMethodForCsvAsync batchingMethodForCsvAsync;
-    @Value("${csv.batch.size}")
-    private int batchSize;
 
     @Transactional
     public void importCsv(MultipartFile file, ImportStatus importStatus) {
@@ -44,14 +41,17 @@ public class CsvImportMethod {
 
             while ((line = csvReader.readNext()) != null) {
                 batch.add(line);
-//                Thread.sleep(5000);
+                Thread.sleep(5000);
                 processedLines++;
                 log.info("Lines processed: {}", processedLines);
 
-                if (batch.size() >= batchSize) {
+                if (batch.size() >= 10) {
                     batchingMethodForCsvAsync.saveBatch(batch);
                     batch.clear();
                     importStatusService.updateProcessedLines(importStatus, processedLines);
+//                    if(processedLines == 20){
+//                        throw new RuntimeException("TESTEXCEPTION");
+//                    }
                 }
             }
 
@@ -63,10 +63,10 @@ public class CsvImportMethod {
             importStatusService.updateProcessedLinesForError(importStatus, processedLines);
             throw new RuntimeException("Error processing CSV file: " + e.getMessage(), e);
         }
-//        catch (InterruptedException e) {
-//            Thread.currentThread().interrupt();
-//            log.error("Thread interrupted while sleeping.", e);
-//        }
+        catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            log.error("Thread interrupted while sleeping.", e);
+        }
         finally {
             importStatusService.setEndDate(importStatus);
             log.info("CSV import completed");

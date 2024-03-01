@@ -18,9 +18,9 @@ public class CsvImportProcessingService {
     private final CsvAsyncMethod csvAsyncMethod;
     private final GeneralMapper generalMapper;
 
-    public ImportStatusDto importCsv(MultipartFile file, String statusCommand) {
+    public ImportStatusDto importCsv(MultipartFile file) {
         try {
-            ImportStatus status = importStatusService.createImportStatus(statusCommand);
+            ImportStatus status = importStatusService.createImportStatus();
             csvAsyncMethod.importCsv(file, status);
             return generalMapper.mapImportStatusToDto(status);
         } catch (Exception e) {

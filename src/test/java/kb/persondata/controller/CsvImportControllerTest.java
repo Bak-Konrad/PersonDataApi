@@ -37,7 +37,7 @@ public class CsvImportControllerTest {
     private CsvImportStatusRepository importStatusRepository;
 
     @Test
-    @WithMockUser(authorities = {"ROLE_ADMIN"})
+    @WithMockUser(authorities = {"ADMIN"})
     void testAddPersonsFromFile_ForAdmin() throws Exception {
         Path filePath = Paths.get("src/main/resources/csvFileForTesting.txt");
         byte[] fileContent = Files.readAllBytes(filePath);
@@ -58,7 +58,7 @@ public class CsvImportControllerTest {
     }
 
     @Test
-    @WithMockUser(authorities = {"ROLE_IMPORTER"})
+    @WithMockUser(authorities = {"IMPORTER"})
     void testAddPersonsFromFile_ForImporter() throws Exception {
         Path filePath = Paths.get("src/main/resources/csvFileForTesting.txt");
         byte[] fileContent = Files.readAllBytes(filePath);
@@ -79,9 +79,9 @@ public class CsvImportControllerTest {
     }
 
     @Test
-    @WithMockUser(authorities = {"ROLE_ADMIN", "ROLE_IMPORTER"})
+    @WithMockUser(authorities = {"ADMIN", "IMPORTER"})
     void testGetImportStatus() throws Exception {
-        String importId = "someImportId";
+        Long importId = 1L;
         ImportStatus importStatus = ImportStatus.builder()
                 .creationDate(LocalDateTime.now())
                 .endDate(LocalDateTime.now().plusHours(2))

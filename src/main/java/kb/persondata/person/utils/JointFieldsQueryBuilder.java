@@ -58,7 +58,6 @@ public class JointFieldsQueryBuilder {
                         builder.like(builder.lower(root.get("emailAddress")), "%" + parameters.get("emailAddress").toLowerCase() + "%"));
             }
         }
-
         return specification;
     }
 }
