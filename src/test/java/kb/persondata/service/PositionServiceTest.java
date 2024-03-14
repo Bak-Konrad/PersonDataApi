@@ -124,11 +124,12 @@ public class PositionServiceTest {
         when(employeeRepository.findWithLockById(employeeId)).thenReturn(Optional.of(employeeToUpdate));
 
         // When + Then
-        positionService.registerPositionForEmployee(employeeId, positionToSave); // No exception should be thrown
+        positionService.registerPositionForEmployee(employeeId, positionToSave);
 
         verify(positionRepository).save(positionToSave);
         verify(employeeRepository).save(employeeToUpdate);
     }
+
     @Test
     public void testRegisterPositionForEmployee_NewPositionAfterExisting() {
         // Given
@@ -151,7 +152,7 @@ public class PositionServiceTest {
         when(employeeRepository.findWithLockById(employeeId)).thenReturn(Optional.of(employeeToUpdate));
 
         // When + Then
-        positionService.registerPositionForEmployee(employeeId, positionToSave); // No exception should be thrown
+        positionService.registerPositionForEmployee(employeeId, positionToSave);
 
         verify(positionRepository).save(positionToSave);
         verify(employeeRepository).save(employeeToUpdate);
@@ -186,6 +187,4 @@ public class PositionServiceTest {
         verify(positionRepository, never()).save(any());
         verify(employeeRepository, never()).save(any());
     }
-
-
 }

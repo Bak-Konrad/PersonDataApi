@@ -118,5 +118,4 @@ class EmployeeControllerTest {
                         .content(objectMapper.writeValueAsString(positionCommand)))
                 .andExpect(status().isUnauthorized());
     }
-
 }

@@ -9,6 +9,7 @@ import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(ConstraintViolationException.class)
@@ -45,8 +46,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
     public ResponseEntity<ExceptionDto> handleOptimisticLockingFailure(ObjectOptimisticLockingFailureException ex) {
-        ExceptionDto exceptionDto = new ExceptionDto("An error occurred while processing your request. " +
-                "Another user has modified the data you were attempting to update. Please try again. " + ex.getMessage());
+        ExceptionDto exceptionDto = new ExceptionDto(" Object optimistic locking exception." +
+                " Object has been updated by another user or deleted");
         return new ResponseEntity<>(exceptionDto, HttpStatus.CONFLICT);
     }
 }

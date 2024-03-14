@@ -1,23 +1,43 @@
 server:
   port: 8081
-#  do sprawdzenia jak działa na porcie 8081
 
 spring:
+
+#  datasource:
+#    url: jdbc:h2:file:/C/Users/konda/OneDrive/Desktop/JavaKurs/PersonDataApi/PersonDataApi
+#    driverClassName: org.h2.Driver
+#    username: sa
+#    password: password
+##  h2 ~ 43000 - 6300 lines/s
   datasource:
-    url: jdbc:h2:mem:test
-    username: sa
-    password: password
-    driver-class-name: org.h2.Driver
+    url: jdbc:postgresql://localhost:5432/person_api
+    driverClassName: org.postgresql.Driver
+    username: postgres
+    password: root
+#  psql ~ 11000 lines/s
+
+  jpa:
+    open-in-view: false
+    show-sql: true
+    properties:
+      hibernate:
+        jdbc:
+          batch-size: 30
+          order-inserts: true
+          dialect: org.hibernate.dialect.PostgreSQLDialect
+          batch_versioned_data: true
+          hbm2ddl.auto: update
+          hibernate.id.new_generator_mappings: false
+          hibernate.temp.use_jdbc_metadata_defaults: false
+    hibernate:
+      ddl-auto: create
 
   security:
     oauth2:
      resourceserver:
        jwt:
-#         issuer-uri: http://localhost:8888/realms/PersonDataApi
          issuer-uri: http://localhost:8080/realms/PersonDataApi
          jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
-
-
 
   jwt:
     auth:
@@ -25,30 +45,7 @@ spring:
         resource-id: PersonDataApiClient
         principal-attribute: preferred_username
 
-
-
-
-#  security:
-#    oauth2:
-#      client:
-#        registration:
-#          keycloak:
-#            client-id: PersonDataApiClient
-#            #            client-secret: my-client-secret
-#            scope: openid, profile, email
-#        provider:
-#          keycloak:
-#            token-uri: ${keycloak.auth-server-url}/realms/${keycloak.realm}/protocol/openid-connect/token
-#            authorization-uri: ${keycloak.auth-server-url}/realms/${keycloak.realm}/protocol/openid-connect/auth
-#            user-info-uri: ${keycloak.auth-server-url}/realms/${keycloak.realm}/protocol/openid-connect/userinfo
-#            jwk-set-uri: ${keycloak.auth-server-url}/realms/${keycloak.realm}/protocol/openid-connect/certs
-
-
-  jpa:
-    open-in-view: false
-    show-sql: true
-
-
-
-
-
+  servlet:
+    multipart:
+      max-file-size: 3GB
+      max-request-size: 3GB

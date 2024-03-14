@@ -26,14 +26,15 @@ public class ImportStatusService {
                 .creationDate(LocalDateTime.now())
                 .status("In progress")
                 .build();
-        return importStatusRepository.save(importStatus);
+
+        return importStatusRepository.saveAndFlush(importStatus);
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void updateProcessedLines(ImportStatus status, Long lines) {
         ImportStatus importStatusToUpdate = getFromDb(status.getStatusId());
         importStatusToUpdate.setProcessedLines(lines);
-        importStatusRepository.save(importStatusToUpdate);
+        importStatusRepository.saveAndFlush(importStatusToUpdate);
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -41,7 +42,7 @@ public class ImportStatusService {
         ImportStatus importStatusToUpdate = getFromDb(status.getStatusId());
         importStatusToUpdate.setProcessedLines(lines);
         importStatusToUpdate.setStatus("Error occurred");
-        importStatusRepository.save(importStatusToUpdate);
+        importStatusRepository.saveAndFlush(importStatusToUpdate);
     }
 
     public ImportStatusDto findById(Long statusId) {
@@ -54,7 +55,7 @@ public class ImportStatusService {
         ImportStatus importStatus = getFromDb(status.getStatusId());
         importStatus.setEndDate(LocalDateTime.now());
         importStatus.setStatus("Ended");
-        importStatusRepository.save(importStatus);
+        importStatusRepository.saveAndFlush(importStatus);
     }
 
     private ImportStatus getFromDb(Long statusId) {

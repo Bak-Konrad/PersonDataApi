@@ -9,13 +9,9 @@ import org.springframework.data.jpa.domain.Specification;
 
 public interface PersonHandlingStrategy<T extends Person> {
 
-    String entityType();
-
     Person addPerson(CreatePersonCommand personCommand);
 
-    Person updatePerson(T person, UpdatePersonCommand updatePersonCommand);
-
-    Person addPersonFromCsv(String[] personData);
+    void updatePerson(T person, UpdatePersonCommand updatePersonCommand);
 
     PersonDto createPersonDto(T person);
 

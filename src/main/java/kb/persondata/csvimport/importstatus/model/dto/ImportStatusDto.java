@@ -13,4 +13,5 @@ public class ImportStatusDto {
     private final LocalDateTime creationDate;
     private LocalDateTime endDate;
     private long processedLines;
+
 }

@@ -32,7 +32,6 @@ public class PositionService {
         positionToSave.setEmployee(employeeToUpdate);
 
         employeeToUpdate.getEmploymentHistory().add(positionToSave);
-        log.info("REGISTER POSITION pozycje employee " + employeeToUpdate.getEmploymentHistory());
         employeeToUpdate.setActualWorkFrom(positionToSave.getFromDate());
         employeeToUpdate.setActualSalary(positionToSave.getSalary());
         employeeToUpdate.setActualPosition(positionToSave.getPositionName());

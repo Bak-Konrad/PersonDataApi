@@ -13,6 +13,6 @@ public class CsvAsyncMethod {
 
     @Async("asyncSinglePool")
     public void importCsv(MultipartFile multipartFile, ImportStatus status) {
-            method.importCsv(multipartFile, status);
+        method.importCsv(multipartFile, status);
     }
 }

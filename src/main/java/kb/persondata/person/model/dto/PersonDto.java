@@ -7,6 +7,7 @@ import lombok.experimental.SuperBuilder;
 @Getter
 public class PersonDto {
     private Long id;
+    private Long version;
     private String entityType;
     private String firstName;
     private String lastName;

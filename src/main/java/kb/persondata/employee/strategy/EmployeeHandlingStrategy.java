@@ -30,11 +30,6 @@ public class EmployeeHandlingStrategy implements PersonHandlingStrategy<Employee
     private final GeneralMapper generalMapper;
 
     @Override
-    public String entityType() {
-        return Employee.class.getSimpleName();
-    }
-
-    @Override
     public Employee addPerson(CreatePersonCommand personCommand) {
         Map<String, String> params = personCommand.getParams();
         return Employee.builder()
@@ -50,7 +45,7 @@ public class EmployeeHandlingStrategy implements PersonHandlingStrategy<Employee
     }
 
     @Override
-    public Person updatePerson(Employee personToUpdate, UpdatePersonCommand updatePersonCommand) {
+    public void updatePerson(Employee personToUpdate, UpdatePersonCommand updatePersonCommand) {
         Map<String, String> params = updatePersonCommand.getParams();
         fieldsUpdater.updateCommonFields(personToUpdate, params);
         if (params.containsKey("actualSalary") && !params.get("actualSalary").isBlank()) {
@@ -62,29 +57,13 @@ public class EmployeeHandlingStrategy implements PersonHandlingStrategy<Employee
         if (params.containsKey("actualWorkFrom") && !params.get("actualWorkFrom").isBlank()) {
             personToUpdate.setActualWorkFrom(LocalDate.parse(params.get("actualWorkFrom")));
         }
-        return personToUpdate;
-    }
-
-    @Override
-    public Employee addPersonFromCsv(String[] personData) {
-        return Employee.builder()
-                .entityType(personData[0].toUpperCase())
-                .firstName(personData[1])
-                .lastName(personData[2])
-                .emailAddress(personData[6])
-                .personalNumber(personData[3])
-                .weight(Double.parseDouble(personData[5]))
-                .height(Double.parseDouble(personData[4]))
-                .actualWorkFrom(LocalDate.parse(personData[11]))
-                .actualPosition(personData[9])
-                .actualSalary(new BigDecimal(personData[10]))
-                .build();
     }
 
     @Override
     public EmployeeDto createPersonDto(Employee person) {
         return EmployeeDto.builder()
                 .id(person.getId())
+                .version(person.getVersion())
                 .entityType(person.getEntityType().toUpperCase())
                 .firstName(person.getFirstName())
                 .lastName(person.getLastName())
@@ -154,5 +133,4 @@ public class EmployeeHandlingStrategy implements PersonHandlingStrategy<Employee
         }
         return hasChanges;
     }
-
 }

@@ -43,17 +43,14 @@ class PersonControllerTest {
     private PersonRepository personRepository;
     @Autowired
     private PersonService personService;
-
     @Autowired
     private ObjectMapper objectMapper;
-
     private Employee employee;
     private Pensioner pensioner;
     private Student student;
 
     @BeforeEach
     void setUp() {
-
         pensioner = Pensioner.builder()
                 .entityType("PENSIONER")
                 .Id(2L)
@@ -102,7 +99,6 @@ class PersonControllerTest {
     @Test
     @WithMockUser(authorities = {"ADMIN"})
     void testUpdateEmployee() throws Exception {
-
         Employee saved = personRepository.saveAndFlush(employee);
         long personId = saved.getId();
 
@@ -127,7 +123,6 @@ class PersonControllerTest {
     @WithMockUser(authorities = {"ADMIN"})
     void testUpdateEmployee_AdminRole_BlankUpdateData_NotExist() throws Exception {
         long personId = 1L;
-
         personRepository.saveAndFlush(employee);
 
         Map<String, String> emptyMap = Collections.emptyMap();
@@ -150,7 +145,6 @@ class PersonControllerTest {
     @Test
     @WithMockUser(authorities = {"ADMIN"})
     void testUpdatePensioner() throws Exception {
-
         Pensioner pensioner1 = personRepository.saveAndFlush(pensioner);
         long personId = pensioner1.getId();
 
@@ -174,7 +168,6 @@ class PersonControllerTest {
     @Test
     @WithMockUser(authorities = {"ADMIN"})
     void testUpdatePensionerWithVersioning() throws Exception {
-
         Pensioner savedPensioner = personRepository.saveAndFlush(pensioner);
         long personId = savedPensioner.getId();
 
@@ -199,7 +192,7 @@ class PersonControllerTest {
         Person updatedPensioner = personRepository.findById(personId).orElse(null);
 
         assertNotNull(updatedPensioner);
-        assertEquals(previousVersion + 1, updatedPensioner.getVersion());
+        assertEquals(previousVersion + 2, updatedPensioner.getVersion());
 
     }
 
@@ -207,7 +200,6 @@ class PersonControllerTest {
     @WithMockUser(authorities = {"ADMIN"})
     void testUpdatePensioner_AdminRole_BlankUpdateData_NotExist() throws Exception {
         long personId = 2L;
-
         personRepository.saveAndFlush(pensioner);
 
         Map<String, String> emptyMap = Collections.emptyMap();
@@ -296,7 +288,6 @@ class PersonControllerTest {
                 .andExpect(jsonPath("$.emailAddress").value("john.doe@ex6am2ple.com"))
                 .andExpect(jsonPath("$.firstName").value("John"))
                 .andExpect(jsonPath("$.lastName").value("Doe"));
-
     }
 
     @Test
@@ -350,7 +341,8 @@ class PersonControllerTest {
                 .andExpect(jsonPath("$.timestamp").exists())
                 .andExpect(jsonPath("$.message").value("Validation failed"))
                 .andExpect(jsonPath("$.violations[0].field").value("personalNumber"))
-                .andExpect(jsonPath("$.violations[0].message").value("Personal number must have exactly 11 digits"));
+                .andExpect(jsonPath("$.violations[0].message")
+                        .value("Personal number must have exactly 11 digits"));
     }
 
     @Test
@@ -449,7 +441,8 @@ class PersonControllerTest {
                 .andExpect(jsonPath("$.timestamp").exists())
                 .andExpect(jsonPath("$.message").value("Validation failed"))
                 .andExpect(jsonPath("$.violations[0].field").value("personalNumber"))
-                .andExpect(jsonPath("$.violations[0].message").value("Personal number must have exactly 11 digits"));
+                .andExpect(jsonPath("$.violations[0].message")
+                        .value("Personal number must have exactly 11 digits"));
     }
 
 
@@ -512,7 +505,8 @@ class PersonControllerTest {
                 .andExpect(jsonPath("$.timestamp").exists())
                 .andExpect(jsonPath("$.message").value("Validation failed"))
                 .andExpect(jsonPath("$.violations[0].field").value("personalNumber"))
-                .andExpect(jsonPath("$.violations[0].message").value("Personal number must have exactly 11 digits"));
+                .andExpect(jsonPath("$.violations[0].message")
+                        .value("Personal number must have exactly 11 digits"));
     }
 
     @Test

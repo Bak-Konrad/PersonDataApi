@@ -34,25 +34,21 @@ public class PersonService {
 
     }
 
-//    Zmieniłem tą metodę, żeby korzystało z dirty checkingu oraz zmieniłem ExceptionHandler, żeby zwracało informacje o
-//    optimistic locku jak zadziała. Zdecydowałem się, nie wywalać booleana z założeniem, że po co metoda ma sie wykonać
-//    skoro nie ma zmian przychodzących. Tutaj kwestia czy według Ciebie w ogóle jest to potrzebne, bo robi się dirtyCheck
-//    zostawiam to, bo wydaje mi sie ze fajnie mieć informacje o tym ze wysyła się zły update, a w przypqdku gdy coś by przeszło
-//    to zostaje dirty checking
-
     @Transactional
     public PersonDto updatePerson(Long personId, UpdatePersonCommand updatePersonCommand) {
         boolean hasChanges = handlingStrategyMap.get(updatePersonCommand.getType()).hasChanges(updatePersonCommand);
         if (!hasChanges) {
             throw new IllegalArgumentException("Blank update data or not exist");
         }
-        Person personToUpdate = personRepository.findById(personId)
+        Person personToUpdate = personRepository.findWithLockById(personId)
                 .orElseThrow(() -> new EntityNotFoundException(MessageFormat
                         .format("Person related to id= {0} has not been found", personId)));
+
         handlingStrategyMap.get(personToUpdate.getEntityType()).updatePerson(personToUpdate, updatePersonCommand);
 
         return handlingStrategyMap.get(personToUpdate.getEntityType()).createPersonDto(personToUpdate);
     }
+
 
     public Page<PersonDto> findPeople(PersonFilteringParameters params, Pageable pageable) {
         Map<String, String> temp = params.getParams();
@@ -70,6 +66,3 @@ public class PersonService {
         return personPage.map(person -> handlingStrategyMap.get(person.getEntityType()).createPersonDto(person));
     }
 }
-
-
-

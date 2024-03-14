@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component
-public class JwtAuthorizationConverter implements Converter<Jwt, AbstractAuthenticationToken> {
+public class JwtAuthDecoder implements Converter<Jwt, AbstractAuthenticationToken> {
     private final JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
     @Value("${spring.jwt.auth.converter.principal-attribute}")
     private String principalClaimName;
@@ -28,15 +28,15 @@ public class JwtAuthorizationConverter implements Converter<Jwt, AbstractAuthent
 
     @Override
     public AbstractAuthenticationToken convert(@NonNull Jwt jwtSource) {
-        Collection<GrantedAuthority> authorities = Stream.concat(jwtGrantedAuthoritiesConverter.convert(jwtSource).stream(),
+        Collection<GrantedAuthority> authorities = Stream.concat(jwtGrantedAuthoritiesConverter.convert(jwtSource)
+                        .stream(),
                 extractResourceRoles(jwtSource).stream()
-        ).collect(Collectors.toSet()
-        );
+        ).collect(Collectors.toSet());
+
         return new JwtAuthenticationToken(
                 jwtSource,
                 authorities,
-                getPrincipalName(jwtSource)
-        );
+                getPrincipalName(jwtSource));
     }
 
     private String getPrincipalName(Jwt jwtSource) {
@@ -68,6 +68,5 @@ public class JwtAuthorizationConverter implements Converter<Jwt, AbstractAuthent
         return resourceRoles.stream()
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toSet());
-
     }
 }

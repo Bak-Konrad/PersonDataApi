@@ -8,7 +8,7 @@ import java.util.Map;
 @Service
 public class JointFieldsUpdater {
 
-    public Person updateCommonFields(Person person, Map<String, String> params) {
+    public void updateCommonFields(Person person, Map<String, String> params) {
 
         if (params.containsKey("firstName") && !params.get("firstName").isBlank()) {
             person.setFirstName(params.get("firstName"));
@@ -28,7 +28,6 @@ public class JointFieldsUpdater {
         if (params.containsKey("emailAddress") && !params.get("emailAddress").isBlank()) {
             person.setEmailAddress(params.get("emailAddress"));
         }
-        return person;
     }
 
     public boolean hasChanges(Map<String, String> params) {
@@ -37,14 +36,13 @@ public class JointFieldsUpdater {
         for (Map.Entry<String, String> entry : params.entrySet()) {
             String key = entry.getKey();
             if ((key.equals("firstName") || key.equals("lastName") || key.equals("personalNumber")
-                    || key.equals("height") || key.equals("weight") || key.equals("emailAddress")) && entry.getValue() != null) {
+                    || key.equals("height") || key.equals("weight") || key.equals("emailAddress")) &&
+                    entry.getValue() != null && !entry.getValue().isBlank()) {
                 changesFound = true;
                 break;
             }
         }
-
         return changesFound;
     }
-
 }
 

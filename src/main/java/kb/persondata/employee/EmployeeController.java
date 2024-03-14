@@ -23,6 +23,7 @@ public class EmployeeController {
     public ResponseEntity<PositionDto> addPositionForEmployee(@PathVariable Long employeeId,
                                                               @RequestBody CreatePositionCommand positionCommand) {
         Position positionToBeSaved = generalMapper.mapPositionFromCommand(positionCommand);
-        return new ResponseEntity<>(positionService.registerPositionForEmployee(employeeId, positionToBeSaved), HttpStatus.OK);
+        return new ResponseEntity<>(positionService.registerPositionForEmployee(employeeId, positionToBeSaved)
+                , HttpStatus.OK);
     }
 }

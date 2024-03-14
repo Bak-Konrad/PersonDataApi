@@ -1,6 +1,6 @@
 package kb.persondata.configuration;
 
-import kb.persondata.configuration.utils.JwtAuthorizationConverter;
+import kb.persondata.configuration.utils.JwtAuthDecoder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,7 +15,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfigKeycloak {
-    private final JwtAuthorizationConverter jwtAuthorizationConverter;
+    private final JwtAuthDecoder jwtAuthDecoder;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -27,11 +27,11 @@ public class SecurityConfigKeycloak {
         http
                 .oauth2ResourceServer()
                 .jwt()
-                .jwtAuthenticationConverter(jwtAuthorizationConverter);
+                .jwtAuthenticationConverter(jwtAuthDecoder);
         http
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        return http.build();
 
+        return http.build();
     }
 }

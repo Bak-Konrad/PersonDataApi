@@ -27,8 +27,6 @@ public class CsvImportController {
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('IMPORTER')")
     @GetMapping("/{importId}")
     public ResponseEntity<ImportStatusDto> getImportStatus(@PathVariable Long importId) {
-
         return new ResponseEntity<>(importStatusService.findById(importId), HttpStatus.OK);
     }
-
 }

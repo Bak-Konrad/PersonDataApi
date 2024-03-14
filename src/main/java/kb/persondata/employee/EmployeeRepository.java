@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.Lock;
 import java.util.Optional;
 
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
-//    pessimistic, bo dodawanie stanowiska raczej rzadko jest używane i nie będzie blokować api aż tak
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     Optional<Employee> findWithLockById(Long employeeId);
 }
