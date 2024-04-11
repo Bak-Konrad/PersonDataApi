@@ -21,21 +21,20 @@ public class ImportStatusService {
     private final CsvImportStatusRepository importStatusRepository;
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public ImportStatus createImportStatus(String statusId) {
+    public ImportStatus createImportStatus() {
         ImportStatus importStatus = ImportStatus.builder()
                 .creationDate(LocalDateTime.now())
-                .statusId(statusId)
                 .status("In progress")
                 .build();
-        importStatusRepository.save(importStatus);
-        return importStatus;
+
+        return importStatusRepository.saveAndFlush(importStatus);
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void updateProcessedLines(ImportStatus status, Long lines) {
         ImportStatus importStatusToUpdate = getFromDb(status.getStatusId());
         importStatusToUpdate.setProcessedLines(lines);
-        importStatusRepository.save(importStatusToUpdate);
+        importStatusRepository.saveAndFlush(importStatusToUpdate);
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -43,10 +42,10 @@ public class ImportStatusService {
         ImportStatus importStatusToUpdate = getFromDb(status.getStatusId());
         importStatusToUpdate.setProcessedLines(lines);
         importStatusToUpdate.setStatus("Error occurred");
-        importStatusRepository.save(importStatusToUpdate);
+        importStatusRepository.saveAndFlush(importStatusToUpdate);
     }
 
-    public ImportStatusDto findById(String statusId) {
+    public ImportStatusDto findById(Long statusId) {
         ImportStatus importStatus = getFromDb(statusId);
         return generalMapper.mapImportStatusToDto(importStatus);
     }
@@ -56,11 +55,11 @@ public class ImportStatusService {
         ImportStatus importStatus = getFromDb(status.getStatusId());
         importStatus.setEndDate(LocalDateTime.now());
         importStatus.setStatus("Ended");
-        importStatusRepository.save(importStatus);
+        importStatusRepository.saveAndFlush(importStatus);
     }
 
-    private ImportStatus getFromDb(String statusId) {
-        return importStatusRepository.findByStatusId(statusId)
+    private ImportStatus getFromDb(Long statusId) {
+        return importStatusRepository.findById(statusId)
                 .orElseThrow(() -> new EntityNotFoundException(MessageFormat
                         .format("ImportStatus related to id= {0} has not been found", statusId)));
     }

@@ -24,13 +24,13 @@ public class PersonController {
     private final PersonService personService;
 
     @PostMapping
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<PersonDto> addPerson(@Valid @RequestBody CreatePersonCommand createPersonCommand) {
         return new ResponseEntity<>(personService.addPerson(createPersonCommand), HttpStatus.CREATED);
     }
 
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PatchMapping("/{personId}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<PersonDto> updatePerson(@PathVariable Long personId,
                                                   @Valid @RequestBody UpdatePersonCommand updatePersonCommand) {
         return new ResponseEntity<>(personService.updatePerson(personId, updatePersonCommand), HttpStatus.OK);
@@ -39,7 +39,6 @@ public class PersonController {
     @GetMapping
     public ResponseEntity<Page<PersonDto>> getPeople(@RequestBody PersonFilteringParameters params,
                                                      @PageableDefault(size = 20) Pageable pageable) {
-        log.info("PARAMETRY W CONTROLLERZE" + params);
 
         return new ResponseEntity<>(personService.findPeople(params, pageable), HttpStatus.OK);
     }

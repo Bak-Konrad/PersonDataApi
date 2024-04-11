@@ -12,6 +12,7 @@ import java.util.Map;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UpdatePersonCommand {
+    private Long version;
     private String type;
     private Map<String, String> params;
 }

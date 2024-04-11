@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
+
 @SuperBuilder
 @Getter
 public class PensionerDto extends PersonDto {

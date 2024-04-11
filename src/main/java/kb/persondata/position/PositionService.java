@@ -9,6 +9,7 @@ import kb.persondata.position.model.dto.PositionDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.text.MessageFormat;
 import java.util.List;
@@ -21,9 +22,9 @@ public class PositionService {
     private final EmployeeRepository employeeRepository;
     private final GeneralMapper generalMapper;
 
-
+    @Transactional
     public PositionDto registerPositionForEmployee(Long employeeId, Position positionToSave) {
-        Employee employeeToUpdate = employeeRepository.findById(employeeId)
+        Employee employeeToUpdate = employeeRepository.findWithLockById(employeeId)
                 .orElseThrow(() -> new EntityNotFoundException(MessageFormat
                         .format("Employee related to id= {0} has not been found", employeeId)));
 
@@ -31,7 +32,6 @@ public class PositionService {
         positionToSave.setEmployee(employeeToUpdate);
 
         employeeToUpdate.getEmploymentHistory().add(positionToSave);
-        log.info("REGISTER POSITION pozycje employee " + employeeToUpdate.getEmploymentHistory());
         employeeToUpdate.setActualWorkFrom(positionToSave.getFromDate());
         employeeToUpdate.setActualSalary(positionToSave.getSalary());
         employeeToUpdate.setActualPosition(positionToSave.getPositionName());
@@ -45,7 +45,13 @@ public class PositionService {
         List<Position> employmentHistory = employee.getEmploymentHistory();
 
         for (Position position : employmentHistory) {
-            if (position.getToDate().isAfter(newPosition.getFromDate())) {
+            if (newPosition.getFromDate().isAfter(position.getFromDate()) && newPosition.getFromDate()
+                    .isBefore(position.getToDate())
+                    || newPosition.getToDate().isAfter(position.getFromDate()) && newPosition.getToDate()
+                    .isBefore(position.getToDate())
+                    || newPosition.getFromDate().isEqual(position.getFromDate()) && newPosition.getToDate()
+                    .isEqual(position.getToDate())
+            ) {
                 throw new IllegalArgumentException("New position dates cannot overlap");
             }
         }

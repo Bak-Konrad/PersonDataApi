@@ -9,7 +9,6 @@ import kb.persondata.csvimport.importstatus.ImportStatusService;
 import kb.persondata.csvimport.importstatus.model.ImportStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,6 +16,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,12 +26,12 @@ import java.util.List;
 @Slf4j
 public class CsvImportMethod {
     private final ImportStatusService importStatusService;
-    private final BatchingMethodForCsvAsync batchingMethodForCsvAsync;
-    @Value("${csv.batch.size}")
-    private int batchSize;
+    private final JdbcBatchingMethodForCsvAsync jdbcBatchingMethodForCsvAsync;
 
     @Transactional
     public void importCsv(MultipartFile file, ImportStatus importStatus) {
+        LocalDateTime startDate = LocalDateTime.now();
+        List<String[]> batch = new ArrayList<>();
         long processedLines = 0;
         try (BufferedReader br = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
             CSVParser csvParser = new CSVParserBuilder().withSeparator(',').build();
@@ -39,37 +40,31 @@ public class CsvImportMethod {
                     .withCSVParser(csvParser)
                     .build();
 
-            List<String[]> batch = new ArrayList<>();
             String[] line;
-
             while ((line = csvReader.readNext()) != null) {
                 batch.add(line);
-//                Thread.sleep(5000);
                 processedLines++;
-                log.info("Lines processed: {}", processedLines);
 
-                if (batch.size() >= batchSize) {
-                    batchingMethodForCsvAsync.saveBatch(batch);
+                if (batch.size() >= 500) {
+                    jdbcBatchingMethodForCsvAsync.saveBatch(batch);
                     batch.clear();
+                }
+                if (processedLines % 1000 == 0) {
                     importStatusService.updateProcessedLines(importStatus, processedLines);
                 }
             }
-
             if (!batch.isEmpty()) {
-                batchingMethodForCsvAsync.saveBatch(batch);
+                jdbcBatchingMethodForCsvAsync.saveBatch(batch);
             }
             importStatusService.updateProcessedLines(importStatus, processedLines);
         } catch (IOException | CsvValidationException e) {
             importStatusService.updateProcessedLinesForError(importStatus, processedLines);
             throw new RuntimeException("Error processing CSV file: " + e.getMessage(), e);
-        }
-//        catch (InterruptedException e) {
-//            Thread.currentThread().interrupt();
-//            log.error("Thread interrupted while sleeping.", e);
-//        }
-        finally {
+        } finally {
             importStatusService.setEndDate(importStatus);
             log.info("CSV import completed");
         }
+        LocalDateTime endDate = LocalDateTime.now();
+        log.info("CSV IMPORT DURATION TIME: " + ChronoUnit.MILLIS.between(startDate, endDate));
     }
 }

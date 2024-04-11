@@ -1,12 +1,51 @@
+server:
+  port: 8081
+
 spring:
+
+#  datasource:
+#    url: jdbc:h2:file:/C/Users/konda/OneDrive/Desktop/JavaKurs/PersonDataApi/PersonDataApi
+#    driverClassName: org.h2.Driver
+#    username: sa
+#    password: password
+##  h2 ~ 43000 - 6300 lines/s
   datasource:
-    url: jdbc:h2:mem:test
-    username: sa
-    password: password
-    driver-class-name: org.h2.Driver
-csv:
-  batch:
-    size: 10
+    url: jdbc:postgresql://localhost:5432/person_api
+    driverClassName: org.postgresql.Driver
+    username: postgres
+    password: root
+#  psql ~ 11000 lines/s
 
+  jpa:
+    open-in-view: false
+    show-sql: true
+    properties:
+      hibernate:
+        jdbc:
+          batch-size: 30
+          order-inserts: true
+          dialect: org.hibernate.dialect.PostgreSQLDialect
+          batch_versioned_data: true
+          hbm2ddl.auto: update
+          hibernate.id.new_generator_mappings: false
+          hibernate.temp.use_jdbc_metadata_defaults: false
+    hibernate:
+      ddl-auto: create
 
+  security:
+    oauth2:
+     resourceserver:
+       jwt:
+         issuer-uri: http://localhost:8080/realms/PersonDataApi
+         jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
 
+  jwt:
+    auth:
+      converter:
+        resource-id: PersonDataApiClient
+        principal-attribute: preferred_username
+
+  servlet:
+    multipart:
+      max-file-size: 3GB
+      max-request-size: 3GB

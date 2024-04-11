@@ -21,11 +21,6 @@ public class PensionerHandlingStrategy implements PersonHandlingStrategy<Pension
     private final JointFieldsUpdater fieldsUpdater;
 
     @Override
-    public String entityType() {
-        return Pensioner.class.getSimpleName();
-    }
-
-    @Override
     public Pensioner addPerson(CreatePersonCommand personCommand) {
         Map<String, String> params = personCommand.getParams();
         return Pensioner.builder()
@@ -42,7 +37,7 @@ public class PensionerHandlingStrategy implements PersonHandlingStrategy<Pension
     }
 
     @Override
-    public Person updatePerson(Pensioner personToUpdate, UpdatePersonCommand updatePersonCommand) {
+    public void updatePerson(Pensioner personToUpdate, UpdatePersonCommand updatePersonCommand) {
 
         Map<String, String> params = updatePersonCommand.getParams();
         fieldsUpdater.updateCommonFields(personToUpdate, params);
@@ -52,28 +47,13 @@ public class PensionerHandlingStrategy implements PersonHandlingStrategy<Pension
         if (params.containsKey("yearsWorked") && !params.get("yearsWorked").isBlank()) {
             personToUpdate.setYearsWorked((Integer.parseInt(params.get("yearsWorked"))));
         }
-        return personToUpdate;
-    }
-
-    @Override
-    public Pensioner addPersonFromCsv(String[] personData) {
-        return Pensioner.builder()
-                .entityType(personData[0].toUpperCase())
-                .firstName(personData[1])
-                .lastName(personData[2])
-                .emailAddress(personData[6])
-                .personalNumber(personData[3])
-                .weight(Double.parseDouble(personData[5]))
-                .height(Double.parseDouble(personData[4]))
-                .pensionValue(new BigDecimal(personData[12]))
-                .yearsWorked(Integer.parseInt(personData[13]))
-                .build();
     }
 
     @Override
     public PensionerDto createPersonDto(Pensioner person) {
         return PensionerDto.builder()
                 .id(person.getId())
+                .version(person.getVersion())
                 .entityType(person.getEntityType().toUpperCase())
                 .firstName(person.getFirstName())
                 .lastName(person.getLastName())

@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class GeneralMapper {
-    ///DTO
     public PositionDto mapPositionToDto(Position position) {
         return PositionDto.builder()
                 .id(position.getId())
@@ -30,7 +29,6 @@ public class GeneralMapper {
                 .build();
     }
 
-    ///COMMAND
     public Position mapPositionFromCommand(CreatePositionCommand positionCommand) {
         return Position.builder()
                 .positionName(positionCommand.getPositionName())

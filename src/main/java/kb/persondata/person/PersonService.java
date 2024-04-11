@@ -40,13 +40,15 @@ public class PersonService {
         if (!hasChanges) {
             throw new IllegalArgumentException("Blank update data or not exist");
         }
-        Person personToUpdate = personRepository.findById(personId)
+        Person personToUpdate = personRepository.findWithLockById(personId)
                 .orElseThrow(() -> new EntityNotFoundException(MessageFormat
                         .format("Person related to id= {0} has not been found", personId)));
+
         handlingStrategyMap.get(personToUpdate.getEntityType()).updatePerson(personToUpdate, updatePersonCommand);
-        personRepository.save(personToUpdate);
+
         return handlingStrategyMap.get(personToUpdate.getEntityType()).createPersonDto(personToUpdate);
     }
+
 
     public Page<PersonDto> findPeople(PersonFilteringParameters params, Pageable pageable) {
         Map<String, String> temp = params.getParams();
@@ -64,6 +66,3 @@ public class PersonService {
         return personPage.map(person -> handlingStrategyMap.get(person.getEntityType()).createPersonDto(person));
     }
 }
-
-
-

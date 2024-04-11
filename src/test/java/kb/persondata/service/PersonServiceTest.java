@@ -50,7 +50,7 @@ public class PersonServiceTest {
 
         when(handlingStrategyMap.get("Employee")).thenReturn(mock(PersonHandlingStrategy.class));
         when(handlingStrategyMap.get("Employee").hasChanges(updatePersonCommand)).thenReturn(true);
-        when(personRepository.findById(personId)).thenReturn(java.util.Optional.of(employeeToUpdate));
+        when(personRepository.findWithLockById(personId)).thenReturn(java.util.Optional.of(employeeToUpdate));
         when(handlingStrategyMap.get("Employee").createPersonDto(employeeToUpdate)).thenReturn(expectedDto);
 
         // When
@@ -58,7 +58,6 @@ public class PersonServiceTest {
 
         // Then
         assertSame(expectedDto, result);
-        verify(personRepository).save(employeeToUpdate);
     }
 
     @Test
@@ -70,7 +69,7 @@ public class PersonServiceTest {
         updatePersonCommand.setParams(Map.of("lastName", "Kowalski"));
         Pensioner pensionerToUpdate = new Pensioner();
         pensionerToUpdate.setEntityType("Pensioner");
-        pensionerToUpdate.setId(personId);
+        pensionerToUpdate.setId(1L);
         pensionerToUpdate.setLastName("Kaczor");
         PersonDto expectedDto = PersonDto.builder()
                 .lastName("Kowalski")
@@ -78,7 +77,7 @@ public class PersonServiceTest {
 
         when(handlingStrategyMap.get("Pensioner")).thenReturn(mock(PersonHandlingStrategy.class));
         when(handlingStrategyMap.get("Pensioner").hasChanges(updatePersonCommand)).thenReturn(true);
-        when(personRepository.findById(personId)).thenReturn(java.util.Optional.of(pensionerToUpdate));
+        when(personRepository.findWithLockById(personId)).thenReturn(java.util.Optional.of(pensionerToUpdate));
         when(handlingStrategyMap.get("Pensioner").createPersonDto(pensionerToUpdate)).thenReturn(expectedDto);
 
         // When
@@ -86,7 +85,7 @@ public class PersonServiceTest {
 
         // Then
         assertSame(expectedDto, result);
-        verify(personRepository).save(pensionerToUpdate);
+
     }
 
     @Test
@@ -104,7 +103,7 @@ public class PersonServiceTest {
 
         when(handlingStrategyMap.get("Student")).thenReturn(mock(PersonHandlingStrategy.class));
         when(handlingStrategyMap.get("Student").hasChanges(updatePersonCommand)).thenReturn(true);
-        when(personRepository.findById(personId)).thenReturn(java.util.Optional.of(studentToUpdate));
+        when(personRepository.findWithLockById(personId)).thenReturn(java.util.Optional.of(studentToUpdate));
         when(handlingStrategyMap.get("Student").createPersonDto(studentToUpdate)).thenReturn(expectedDto);
 
         // When
@@ -112,7 +111,6 @@ public class PersonServiceTest {
 
         // Then
         assertSame(expectedDto, result);
-        verify(personRepository).save(studentToUpdate);
     }
 
     @Test
@@ -121,7 +119,6 @@ public class PersonServiceTest {
         Long personId = 1L;
         UpdatePersonCommand updatePersonCommand = new UpdatePersonCommand();
         updatePersonCommand.setType("Student");
-        Student studentToUpdate = new Student(); // Zakładam, że Student rozszerza klasę Person
 
         when(handlingStrategyMap.get("Student")).thenReturn(mock(PersonHandlingStrategy.class));
         when(handlingStrategyMap.get("Student").hasChanges(updatePersonCommand)).thenReturn(false);
@@ -143,7 +140,6 @@ public class PersonServiceTest {
         updatePersonCommand.setParams(Map.of("height", "200.00"));
         when(handlingStrategyMap.get("Student")).thenReturn(mock(PersonHandlingStrategy.class));
         when(handlingStrategyMap.get("Student").hasChanges(updatePersonCommand)).thenReturn(true);
-        when(personRepository.findById(personId)).thenReturn(java.util.Optional.empty());
 
         // When + Then
         assertThatExceptionOfType(EntityNotFoundException.class)
@@ -227,6 +223,4 @@ public class PersonServiceTest {
         assertSame(expectedDto, result);
         verify(personRepository).save(studentToSave);
     }
-
-
 }

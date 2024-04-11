@@ -21,10 +21,6 @@ import java.util.Map;
 public class StudentHandlingStrategy implements PersonHandlingStrategy<Student> {
     private final JointFieldsUpdater fieldsUpdater;
 
-    @Override
-    public String entityType() {
-        return Student.class.getSimpleName();
-    }
 
     @Override
     public Student addPerson(CreatePersonCommand personCommand) {
@@ -46,7 +42,7 @@ public class StudentHandlingStrategy implements PersonHandlingStrategy<Student> 
     }
 
     @Override
-    public Person updatePerson(Student personToUpdate, UpdatePersonCommand updatePersonCommand) {
+    public void updatePerson(Student personToUpdate, UpdatePersonCommand updatePersonCommand) {
         Map<String, String> params = updatePersonCommand.getParams();
         fieldsUpdater.updateCommonFields(personToUpdate, params);
         if (params.containsKey("scholarship") && !params.get("scholarship").isBlank()) {
@@ -58,32 +54,13 @@ public class StudentHandlingStrategy implements PersonHandlingStrategy<Student> 
         if (params.containsKey("academicYear") && !params.get("academicYear").isBlank()) {
             personToUpdate.setAcademicYear(LocalDate.parse(params.get("academicYear")));
         }
-        return personToUpdate;
-
-    }
-
-    @Override
-    public Student addPersonFromCsv(String[] personData) {
-        return Student.builder()
-                .entityType(personData[0])
-                .firstName(personData[1])
-                .lastName(personData[2])
-                .emailAddress(personData[6])
-                .personalNumber(personData[3])
-                .weight(Double.parseDouble(personData[5]))
-                .height(Double.parseDouble(personData[4]))
-                .universityName(personData[7])
-                .academicYear(LocalDate.parse(personData[8]))
-                .courseName(personData[9])
-                .scholarship(new BigDecimal(personData[10]))
-                .build();
-
     }
 
     @Override
     public StudentDto createPersonDto(Student person) {
         return StudentDto.builder()
                 .entityType(person.getEntityType())
+                .version(person.getVersion())
                 .firstName(person.getFirstName())
                 .lastName(person.getLastName())
                 .emailAddress(person.getEmailAddress())

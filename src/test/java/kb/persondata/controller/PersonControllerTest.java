@@ -30,7 +30,6 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -44,17 +43,14 @@ class PersonControllerTest {
     private PersonRepository personRepository;
     @Autowired
     private PersonService personService;
-
     @Autowired
     private ObjectMapper objectMapper;
-
     private Employee employee;
     private Pensioner pensioner;
     private Student student;
 
     @BeforeEach
     void setUp() {
-
         pensioner = Pensioner.builder()
                 .entityType("PENSIONER")
                 .Id(2L)
@@ -101,9 +97,8 @@ class PersonControllerTest {
     }
 
     @Test
-    @WithMockUser(authorities = {"ROLE_ADMIN"})
+    @WithMockUser(authorities = {"ADMIN"})
     void testUpdateEmployee() throws Exception {
-
         Employee saved = personRepository.saveAndFlush(employee);
         long personId = saved.getId();
 
@@ -118,18 +113,16 @@ class PersonControllerTest {
 
         mockMvc.perform(patch("/api/v1/data/persons/{personId}", personId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updatePersonCommand))
-                        .with(user("admin").roles("ADMIN")))
+                        .content(objectMapper.writeValueAsString(updatePersonCommand)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.firstName").value("John"))
                 .andExpect(jsonPath("$.lastName").value("Dudeson"));
     }
 
     @Test
-    @WithMockUser(authorities = {"ROLE_ADMIN"})
+    @WithMockUser(authorities = {"ADMIN"})
     void testUpdateEmployee_AdminRole_BlankUpdateData_NotExist() throws Exception {
         long personId = 1L;
-
         personRepository.saveAndFlush(employee);
 
         Map<String, String> emptyMap = Collections.emptyMap();
@@ -141,8 +134,7 @@ class PersonControllerTest {
 
         mockMvc.perform(patch("/api/v1/data/persons/{personId}", personId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updatePersonCommand))
-                        .with(user("admin").roles("ADMIN"))) // Symulacja roli administratora
+                        .content(objectMapper.writeValueAsString(updatePersonCommand)))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.timestamp").exists())
@@ -151,9 +143,8 @@ class PersonControllerTest {
 
 
     @Test
-    @WithMockUser(authorities = {"ROLE_ADMIN"})
+    @WithMockUser(authorities = {"ADMIN"})
     void testUpdatePensioner() throws Exception {
-
         Pensioner pensioner1 = personRepository.saveAndFlush(pensioner);
         long personId = pensioner1.getId();
 
@@ -168,17 +159,15 @@ class PersonControllerTest {
 
         mockMvc.perform(patch("/api/v1/data/persons/{personId}", personId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updatePersonCommand))
-                        .with(user("admin").roles("ADMIN")))
+                        .content(objectMapper.writeValueAsString(updatePersonCommand)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.firstName").value("Jane"))
                 .andExpect(jsonPath("$.lastName").value("Brown"));
     }
 
     @Test
-    @WithMockUser(authorities = {"ROLE_ADMIN"})
+    @WithMockUser(authorities = {"ADMIN"})
     void testUpdatePensionerWithVersioning() throws Exception {
-
         Pensioner savedPensioner = personRepository.saveAndFlush(pensioner);
         long personId = savedPensioner.getId();
 
@@ -195,8 +184,7 @@ class PersonControllerTest {
 
         mockMvc.perform(patch("/api/v1/data/persons/{personId}", personId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updatePersonCommand))
-                        .with(user("admin").roles("ADMIN")))
+                        .content(objectMapper.writeValueAsString(updatePersonCommand)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.firstName").value("Jane"))
                 .andExpect(jsonPath("$.lastName").value("Brown"));
@@ -204,15 +192,14 @@ class PersonControllerTest {
         Person updatedPensioner = personRepository.findById(personId).orElse(null);
 
         assertNotNull(updatedPensioner);
-        assertEquals(previousVersion + 1, updatedPensioner.getVersion());
+        assertEquals(previousVersion + 2, updatedPensioner.getVersion());
 
     }
 
     @Test
-    @WithMockUser(authorities = {"ROLE_ADMIN"})
+    @WithMockUser(authorities = {"ADMIN"})
     void testUpdatePensioner_AdminRole_BlankUpdateData_NotExist() throws Exception {
         long personId = 2L;
-
         personRepository.saveAndFlush(pensioner);
 
         Map<String, String> emptyMap = Collections.emptyMap();
@@ -223,8 +210,7 @@ class PersonControllerTest {
 
         mockMvc.perform(patch("/api/v1/data/persons/{personId}", personId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updatePersonCommand))
-                        .with(user("admin").roles("ADMIN"))) // Symulacja roli administratora
+                        .content(objectMapper.writeValueAsString(updatePersonCommand)))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.timestamp").exists())
@@ -232,7 +218,7 @@ class PersonControllerTest {
     }
 
     @Test
-    @WithMockUser(authorities = {"ROLE_ADMIN"})
+    @WithMockUser(authorities = {"ADMIN"})
     void testUpdateStudent() throws Exception {
 
         Student student1 = personRepository.saveAndFlush(student);
@@ -249,15 +235,14 @@ class PersonControllerTest {
 
         mockMvc.perform(patch("/api/v1/data/persons/{personId}", personId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updatePersonCommand))
-                        .with(user("admin").roles("ADMIN")))
+                        .content(objectMapper.writeValueAsString(updatePersonCommand)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.firstName").value("Alice"))
                 .andExpect(jsonPath("$.lastName").value("Brown"));
     }
 
     @Test
-    @WithMockUser(authorities = {"ROLE_ADMIN"})
+    @WithMockUser(authorities = {"ADMIN"})
     void testUpdateStudent_AdminRole_BlankUpdateData_NotExist() throws Exception {
         long personId = 3L;
         personRepository.saveAndFlush(student);
@@ -271,8 +256,7 @@ class PersonControllerTest {
 
         mockMvc.perform(patch("/api/v1/data/persons/{personId}", personId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updatePersonCommand))
-                        .with(user("admin").roles("ADMIN"))) // Symulacja roli administratora
+                        .content(objectMapper.writeValueAsString(updatePersonCommand)))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.timestamp").exists())
@@ -280,7 +264,7 @@ class PersonControllerTest {
     }
 
     @Test
-    @WithMockUser(authorities = {"ROLE_ADMIN"})
+    @WithMockUser(authorities = {"ADMIN"})
     void testAddEmployee() throws Exception {
         Map<String, String> employeeMap = new HashMap<>();
         employeeMap.put("firstName", "John");
@@ -304,11 +288,10 @@ class PersonControllerTest {
                 .andExpect(jsonPath("$.emailAddress").value("john.doe@ex6am2ple.com"))
                 .andExpect(jsonPath("$.firstName").value("John"))
                 .andExpect(jsonPath("$.lastName").value("Doe"));
-
     }
 
     @Test
-    @WithMockUser(authorities = {"ROLE_ADMIN"})
+    @WithMockUser(authorities = {"ADMIN"})
     void testAddEmployee_InvalidEmailAddressValidationFailure() throws Exception {
         Map<String, String> employeeMap = new HashMap<>();
         employeeMap.put("firstName", "John");
@@ -335,7 +318,7 @@ class PersonControllerTest {
     }
 
     @Test
-    @WithMockUser(authorities = {"ROLE_ADMIN"})
+    @WithMockUser(authorities = {"ADMIN"})
     void testAddEmployee_InvalidPersonalNumberValidationFailure() throws Exception {
         Map<String, String> employeeMap = new HashMap<>();
         employeeMap.put("firstName", "John");
@@ -358,11 +341,12 @@ class PersonControllerTest {
                 .andExpect(jsonPath("$.timestamp").exists())
                 .andExpect(jsonPath("$.message").value("Validation failed"))
                 .andExpect(jsonPath("$.violations[0].field").value("personalNumber"))
-                .andExpect(jsonPath("$.violations[0].message").value("Personal number must have exactly 11 digits"));
+                .andExpect(jsonPath("$.violations[0].message")
+                        .value("Personal number must have exactly 11 digits"));
     }
 
     @Test
-    @WithMockUser(authorities = {"ROLE_ADMIN"})
+    @WithMockUser(authorities = {"ADMIN"})
     void testAddStudent() throws Exception {
         Map<String, String> studentMap = new HashMap<>();
         studentMap.put("firstName", "John");
@@ -399,7 +383,7 @@ class PersonControllerTest {
     }
 
     @Test
-    @WithMockUser(authorities = {"ROLE_ADMIN"})
+    @WithMockUser(authorities = {"ADMIN"})
     void testAddStudent_InvalidEmailAddressValidationFailure() throws Exception {
         Map<String, String> studentMap = new HashMap<>();
         studentMap.put("firstName", "Alice");
@@ -430,7 +414,7 @@ class PersonControllerTest {
     }
 
     @Test
-    @WithMockUser(authorities = {"ROLE_ADMIN"})
+    @WithMockUser(authorities = {"ADMIN"})
     void testAddStudent_InvalidPersonalNumberValidationFailure() throws Exception {
         Map<String, String> studentMap = new HashMap<>();
         studentMap.put("firstName", "Alice");
@@ -457,12 +441,13 @@ class PersonControllerTest {
                 .andExpect(jsonPath("$.timestamp").exists())
                 .andExpect(jsonPath("$.message").value("Validation failed"))
                 .andExpect(jsonPath("$.violations[0].field").value("personalNumber"))
-                .andExpect(jsonPath("$.violations[0].message").value("Personal number must have exactly 11 digits"));
+                .andExpect(jsonPath("$.violations[0].message")
+                        .value("Personal number must have exactly 11 digits"));
     }
 
 
     @Test
-    @WithMockUser(authorities = {"ROLE_ADMIN"})
+    @WithMockUser(authorities = {"ADMIN"})
     void testAddPensioner() throws Exception {
         Map<String, String> pensionerMap = new HashMap<>();
         pensionerMap.put("firstName", "Jane");
@@ -495,7 +480,7 @@ class PersonControllerTest {
     }
 
     @Test
-    @WithMockUser(authorities = {"ROLE_ADMIN"})
+    @WithMockUser(authorities = {"ADMIN"})
     void testAddPensioner_PersonalNumberValidationFailure() throws Exception {
         Map<String, String> pensionerMap = new HashMap<>();
         pensionerMap.put("firstName", "Jane");
@@ -520,11 +505,12 @@ class PersonControllerTest {
                 .andExpect(jsonPath("$.timestamp").exists())
                 .andExpect(jsonPath("$.message").value("Validation failed"))
                 .andExpect(jsonPath("$.violations[0].field").value("personalNumber"))
-                .andExpect(jsonPath("$.violations[0].message").value("Personal number must have exactly 11 digits"));
+                .andExpect(jsonPath("$.violations[0].message")
+                        .value("Personal number must have exactly 11 digits"));
     }
 
     @Test
-    @WithMockUser(authorities = {"ROLE_ADMIN"})
+    @WithMockUser(authorities = {"ADMIN"})
     void testAddPensioner_InvalidEmail() throws Exception {
         Map<String, String> pensionerMap = new HashMap<>();
         pensionerMap.put("firstName", "Jane");
@@ -551,4 +537,5 @@ class PersonControllerTest {
                 .andExpect(jsonPath("$.violations[0].field").value("emailAddress"))
                 .andExpect(jsonPath("$.violations[0].message").value("Invalid email address"));
     }
+
 }

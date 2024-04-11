@@ -8,8 +8,8 @@ import kb.persondata.position.model.dto.PositionDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,11 +18,12 @@ public class EmployeeController {
     private final PositionService positionService;
     private final GeneralMapper generalMapper;
 
-    @PreAuthorize("hasAuthority('ROLE_ADMIN,ROLE_EMPLOYEE')")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('EMPLOYEE')")
     @PatchMapping("/{employeeId}/positions")
     public ResponseEntity<PositionDto> addPositionForEmployee(@PathVariable Long employeeId,
                                                               @RequestBody CreatePositionCommand positionCommand) {
         Position positionToBeSaved = generalMapper.mapPositionFromCommand(positionCommand);
-        return new ResponseEntity<>(positionService.registerPositionForEmployee(employeeId, positionToBeSaved), HttpStatus.OK);
+        return new ResponseEntity<>(positionService.registerPositionForEmployee(employeeId, positionToBeSaved)
+                , HttpStatus.OK);
     }
 }
